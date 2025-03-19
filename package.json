@@ -1,0 +1,103 @@
+{
+	"name": "nspin",
+	"description": "Lightweight and efficient Node.js spinner package using native features",
+	"version": "1.0.0",
+	"license": "MIT",
+	"author": "ManuelGil",
+	"sponsor": {
+		"url": "https://github.com/sponsors/ManuelGil"
+	},
+	"engines": {
+		"node": ">=22.0.0"
+	},
+	"keywords": [
+		"cli",
+		"lightweight",
+		"native",
+		"Node.js",
+		"nodejs",
+		"nspin",
+		"spinner"
+	],
+	"homepage": "https://github.com/ManuelGil/nspin",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ManuelGil/nspin.git"
+	},
+	"bugs": {
+		"url": "https://github.com/ManuelGil/nspin/issues"
+	},
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
+	"exports": {
+		"./package.json": "./package.json",
+		".": {
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		}
+	},
+	"files": [
+		"CHANGELOG.md",
+		"dist"
+	],
+	"scripts": {
+		"clean": "rimraf dist",
+		"build": "tsup",
+		"pretest": "npm run clean && npm run build",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"format": "prettier --write .",
+		"lint": "eslint . --ext .ts",
+		"ts-check": "tsc --noEmit",
+		"check-format": "prettier --check .",
+		"check-exports": "attw --pack .",
+		"link": "cd dist && npm link",
+		"publish:verdaccio": "npm publish --registry http://localhost:4873",
+		"publish": "npm publish --access=public",
+		"prepare": "husky",
+		"release": "release-it"
+	},
+	"devDependencies": {
+		"@arethetypeswrong/cli": "^0.17.4",
+		"@commitlint/cli": "^19.8.0",
+		"@commitlint/config-conventional": "^19.8.0",
+		"@eslint/js": "^9.22.0",
+		"@release-it/conventional-changelog": "^10.0.0",
+		"@release-it/keep-a-changelog": "^6.0.0",
+		"@types/node": "^22.13.10",
+		"eslint": "^9.22.0",
+		"globals": "^16.0.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^15.4.3",
+		"prettier": "^3.5.3",
+		"release-it": "^18.1.2",
+		"rimraf": "^6.0.1",
+		"tsup": "^8.4.0",
+		"typescript": "^5.8.2",
+		"typescript-eslint": "^8.26.0",
+		"vitest": "^3.0.8"
+	},
+	"lint-staged": {
+		"*.ts": [
+			"npx eslint --fix",
+			"npx prettier --write"
+		]
+	},
+	"release-it": {
+		"git": {
+			"commitMessage": "chore: :bookmark: release ${version}"
+		},
+		"github": {
+			"release": true
+		},
+		"npm": {
+			"publish": false
+		},
+		"plugins": {
+			"@release-it/keep-a-changelog": {
+				"filename": "CHANGELOG.md"
+			}
+		}
+	}
+}

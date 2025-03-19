@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"moduleResolution": "Bundler",
+		"module": "ESNext",
+		"strict": true,
+		"noEmit": true,
+		"stripInternal": true,
+		"verbatimModuleSyntax": true,
+		"skipLibCheck": true,
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
+}
