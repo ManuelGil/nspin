@@ -5,9 +5,10 @@ export default defineConfig({
   outDir: 'dist',
   clean: true,
   format: ['esm', 'cjs'],
-  target: 'esnext',
+  target: 'node22',
   dts: true,
   minify: true,
   sourcemap: true,
-  splitting: false, // desactiva el splitting para generar un único archivo
+  splitting: false,
+  treeshake: true,
 });

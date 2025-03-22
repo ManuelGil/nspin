@@ -1,7 +1,7 @@
 {
 	"name": "nspin",
 	"description": "Lightweight and efficient Node.js spinner package using native features",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"license": "MIT",
 	"author": "ManuelGil",
 	"sponsor": {
@@ -31,15 +31,17 @@
 	"module": "dist/index.mjs",
 	"types": "dist/index.d.ts",
 	"exports": {
-		"./package.json": "./package.json",
 		".": {
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.js"
-		}
+		},
+		"./package.json": "./package.json"
 	},
+	"sideEffects": false,
 	"files": [
-		"CHANGELOG.md",
-		"dist"
+		"dist",
+		"README.md",
+		"CHANGELOG.md"
 	],
 	"scripts": {
 		"clean": "rimraf dist",

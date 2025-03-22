@@ -1,0 +1,8 @@
+.gitignore
+.npmignore
+dist/**/*.map
+node_modules
+src/
+tests/
+tsconfig.json
+tsup.config.ts
