@@ -1,5 +1,20 @@
-import type { FormatOptions } from '.';
+import type { FormatOptions } from './format-options';
 
+/**
+ * SpinnerOptions: The spinner options.
+ * The spinner options are used to configure the spinner animation.
+ *
+ * @type {SpinnerOptions}
+ * @public
+ * @example
+ * const spinnerOptions: SpinnerOptions = {
+ *   frames: ['-', '\\', '|', '/'],
+ *   interval: 80,
+ *   format: 'cyan',
+ * };
+ *
+ * @returns {SpinnerOptions} - The spinner options
+ */
 export interface SpinnerOptions {
   /**
    * Frames for the animation. It can be an array in memory.

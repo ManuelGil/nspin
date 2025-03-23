@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-03-23
+
+### Added
+
+- Add `biome` dependency for improved code formatting and linting.
+
+### Changed
+
+- Update imports to use the correct paths for the files in the `src` directory.
+- Update `README.md` to reflect the new structure and usage of the package.
+
+### Removed
+
+- Remove barrel files from the `src` directory to simplify the module structure.
+- Remove unused `eslint` and `prettier` configurations from the package.
+
 ## [1.1.1] - 2025-03-22
 
 ### Fixed
@@ -28,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the npm package.
 
-[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/ManuelGil/nspin/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/ManuelGil/nspin/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ManuelGil/nspin/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ManuelGil/nspin/releases/tag/v1.0.0

@@ -1,4 +1,6 @@
-import type { BackgroundColors, ForegroundColors, Modifiers } from '.';
+import type { BackgroundColors } from './background-colors';
+import type { ForegroundColors } from './foreground-colors';
+import type { Modifiers } from './modifiers';
 
 /**
  * FormatOptions: The format options.
