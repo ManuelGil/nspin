@@ -1,7 +1,7 @@
 {
 	"name": "nspin",
 	"description": "Lightweight and efficient Node.js spinner package using native features",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"license": "MIT",
 	"author": "ManuelGil",
 	"sponsor": {
@@ -40,12 +40,14 @@
 	"sideEffects": false,
 	"files": [
 		"dist",
+		"CHANGELOG.md",
 		"README.md",
-		"CHANGELOG.md"
+		"!dist/**/*.map"
 	],
 	"scripts": {
-		"clean": "rimraf dist",
+		"clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
 		"build": "tsup",
+		"build:prod": "cross-env NODE_ENV=production tsup",
 		"pretest": "npm run clean && npm run build",
 		"test": "vitest run",
 		"test:watch": "vitest",
@@ -55,8 +57,13 @@
 		"check-format": "prettier --check .",
 		"check-exports": "attw --pack .",
 		"link": "cd dist && npm link",
-		"publish:verdaccio": "npm publish --registry http://localhost:4873",
-		"publish": "npm publish --access=public",
+		"lint:check": "biome check --write",
+		"audit": "npm audit",
+		"validate": "npm run lint:check && npm run test && npm run audit",
+		"ci": "npm run clean && npm run build && npm run validate",
+		"prepublishOnly": "npm run build:prod",
+		"publish:local": "npm publish --registry http://localhost:4873",
+		"publish:public": "npm publish --access=public",
 		"prepare": "husky",
 		"release": "release-it"
 	},
@@ -68,13 +75,13 @@
 		"@release-it/conventional-changelog": "^10.0.0",
 		"@release-it/keep-a-changelog": "^6.0.0",
 		"@types/node": "^22.13.10",
+		"cross-env": "^7.0.3",
 		"eslint": "^9.22.0",
 		"globals": "^16.0.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^15.4.3",
 		"prettier": "^3.5.3",
 		"release-it": "^18.1.2",
-		"rimraf": "^6.0.1",
 		"tsup": "^8.4.0",
 		"typescript": "^5.8.2",
 		"typescript-eslint": "^8.26.0",
@@ -82,8 +89,8 @@
 	},
 	"lint-staged": {
 		"*.ts": [
-			"npx eslint --fix",
-			"npx prettier --write"
+			"eslint --fix",
+			"prettier --write"
 		]
 	},
 	"release-it": {

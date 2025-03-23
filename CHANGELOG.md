@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2025-03-22
+
+### Fixed
+
+- Fix `tsup` build process to ensure proper handling of ESM and CJS modules.
+
 ## [1.1.0] - 2025-03-21
 
 ### Changed
@@ -22,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the npm package.
 
-[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/ManuelGil/nspin/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ManuelGil/nspin/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/ManuelGil/nspin/releases/tag/v1.0.0

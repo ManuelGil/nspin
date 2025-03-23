@@ -8,7 +8,6 @@
 		"declarationDir": "./dist",
 		"outDir": "./dist",
 		"stripInternal": true,
-		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
 		"resolveJsonModule": true,
