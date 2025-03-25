@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add position option to spinner to allow customization of the spinner's position.
+- Enhance frame update functionality to support custom frame updates.
+
 ## [1.2.0] - 2025-03-23
 
 ### Added
@@ -44,7 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the npm package.
 
-[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/ManuelGil/nspin/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/ManuelGil/nspin/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/ManuelGil/nspin/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/ManuelGil/nspin/compare/v1.0.0...v1.1.0
