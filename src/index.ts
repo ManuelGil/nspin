@@ -291,9 +291,6 @@ export class Spinner {
       (s) => s !== this,
     );
 
-    // Clear the current line and print the final message on a new line.
-    clearLine();
-
     process.off('exit', this.cleanup);
 
     return this;
@@ -334,9 +331,15 @@ export class Spinner {
 
     if (index === -1) return;
 
-    // Move the cursor to the corresponding spinner line if possible.
-    if (typeof process.stdout.moveCursor === 'function') {
-      process.stdout.moveCursor(0, -(Spinner.spinnerInstances.length - index));
+    // Cache stdout methods to reduce repeated lookups
+    const moveCursor = process.stdout.moveCursor;
+
+    if (typeof moveCursor === 'function') {
+      moveCursor.call(
+        process.stdout,
+        0,
+        -(Spinner.spinnerInstances.length - index),
+      );
     }
 
     if (typeof process.stdout.cursorTo === 'function') {
@@ -358,22 +361,25 @@ export class Spinner {
         frame = styleText(this.format, frame);
       }
 
+      // Compute elapsed time only once
       const elapsed = Math.floor(performance.now() - this.startTime);
 
       // Modify output based on position: 'right' shows text first, then spinner frame.
-      if (this.position === 'right') {
-        output = `${this.text} ${frame} (${elapsed}ms)`;
-      } else {
-        // Default is 'left': spinner frame comes first.
-        output = `${frame} ${this.text} (${elapsed}ms)`;
-      }
+      output =
+        this.position === 'right'
+          ? `${this.text} ${frame} (${elapsed}ms)`
+          : `${frame} ${this.text} (${elapsed}ms)`;
     }
 
     process.stdout.write(output);
 
-    // Restore the cursor position.
-    if (typeof process.stdout.moveCursor === 'function') {
-      process.stdout.moveCursor(0, Spinner.spinnerInstances.length - index);
+    // Restore the cursor position using the cached method.
+    if (typeof moveCursor === 'function') {
+      moveCursor.call(
+        process.stdout,
+        0,
+        Spinner.spinnerInstances.length - index,
+      );
     }
   }
 
