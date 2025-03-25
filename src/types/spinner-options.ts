@@ -51,4 +51,16 @@ export interface SpinnerOptions {
    * @returns {string | string[]} - Name of the color to apply to the spinner
    */
   format: FormatOptions;
+
+  /**
+   * The position of the spinner in relation to the text.
+   * It can be 'left' or 'right'.
+   *
+   * @type {'left' | 'right'}
+   * @public
+   * @export
+   *
+   * @returns {'left' | 'right'} - The position of the spinner in relation to the text
+   */
+  position: 'left' | 'right';
 }

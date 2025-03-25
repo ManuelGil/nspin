@@ -116,6 +116,19 @@ export class Spinner {
   private startTime: number = 0;
 
   /**
+   * position: The position of the spinner animation.
+   * The position is used to determine where the spinner animation is displayed in the console.
+   *
+   * @type {'left' | 'right'}
+   * @private
+   * @example
+   * console.log(spinner.position);
+   *
+   * @returns {'left' | 'right'} - The position of the spinner animation
+   */
+  private position: 'left' | 'right' = 'left';
+
+  /**
    * spinnerInstances: The spinner instances.
    * The spinner instances are used to manage multiple spinner animations concurrently.
    *
@@ -143,7 +156,7 @@ export class Spinner {
    * spinner.start('Loading...');
    * spinner.stop('Done!');
    *
-   * @param options The options to customize the spinner animation.
+   * @param {SpinnerOptions} options The options to customize the spinner animation.
    *
    * @returns {Spinner} - The spinner instance
    */
@@ -151,16 +164,25 @@ export class Spinner {
     frames: string[];
     interval?: number;
     format?: string | string[];
+    position?: 'left' | 'right';
   }) {
     const {
       frames = ['-', '\\', '|', '/'],
       interval = 80,
       format,
+      position = 'left',
     }: SpinnerOptions = (options as SpinnerOptions) ?? {};
 
     this.frames = frames;
     this.interval = interval;
     this.format = format;
+
+    // Check if the position is valid
+    if (position !== 'left' && position !== 'right') {
+      this.position = 'left';
+    } else {
+      this.position = position;
+    }
   }
 
   // -----------------------------------------------------------------
@@ -177,7 +199,7 @@ export class Spinner {
    * @example
    * spinner.start('Loading...');
    *
-   * @param text Message to display alongside the spinner.
+   * @param {string} text Message to display alongside the spinner.
    *
    * @returns The Spinner instance for chaining.
    */
@@ -199,6 +221,26 @@ export class Spinner {
   }
 
   /**
+   * Dynamically updates the spinner frames and resets the frame counter.
+   * The new frames are used for the spinner animation.
+   *
+   * @public
+   * @example
+   * spinner.updateFrames(['-', '\\', '|', '/']);
+   *
+   * @param {string[]} newFrames An array of new frames to use for the spinner animation.
+
+  * @returns The Spinner instance for chaining.
+   */
+  public updateFrames(newFrames: string[]): this {
+    // Update the spinner frames with the new array
+    this.frames = newFrames;
+    // Reset currentFrame index to 0 so the new frames start from the beginning
+    this.currentFrame = 0;
+    return this;
+  }
+
+  /**
    * Updates the text displayed next to the spinner.
    * The new message is displayed alongside the spinner animation.
    *
@@ -206,7 +248,7 @@ export class Spinner {
    * @example
    * spinner.updateText('Loading...');
    *
-   * @param newText The new message to display.
+   * @param {string} newText The new message to display.
    *
    * @returns The Spinner instance for chaining.
    */
@@ -224,7 +266,7 @@ export class Spinner {
    * @example
    * spinner.stop('Done!');
    *
-   * @param finalText Final message to display.
+   * @param {string} finalText Final message to display.
    *
    * @returns The Spinner instance for chaining.
    */
@@ -267,12 +309,12 @@ export class Spinner {
    * @example
    * spinner.render();
    *
-   * @param finalText If provided, displays this text instead of the animated spinner.
+   * @param {string} [finalText] If provided, displays this text instead of the animated spinner.
    *
    * @returns void - Nothing
    */
   private render(finalText?: string): void {
-    // In non-TTY environments, degrade gracefully.
+    // For non-TTY environments, output degrades gracefully.
     if (!process.stdout.isTTY) {
       if (finalText !== undefined) {
         process.stdout.write(finalText + '\n');
@@ -282,8 +324,8 @@ export class Spinner {
         this.currentFrame = (this.currentFrame + 1) % this.frames.length;
 
         const elapsed = Math.floor(performance.now() - this.startTime);
-
-        process.stdout.write(`${frame} ${this.text} (${elapsed}ms)\n`);
+        // In non-TTY, simply output text then frame
+        process.stdout.write(`${this.text} ${frame} (${elapsed}ms)\n`);
       }
       return;
     }
@@ -292,7 +334,7 @@ export class Spinner {
 
     if (index === -1) return;
 
-    // Move the cursor to the corresponding spinner line if the function exists.
+    // Move the cursor to the corresponding spinner line if possible.
     if (typeof process.stdout.moveCursor === 'function') {
       process.stdout.moveCursor(0, -(Spinner.spinnerInstances.length - index));
     }
@@ -318,12 +360,18 @@ export class Spinner {
 
       const elapsed = Math.floor(performance.now() - this.startTime);
 
-      output = `${frame} ${this.text} (${elapsed}ms)`;
+      // Modify output based on position: 'right' shows text first, then spinner frame.
+      if (this.position === 'right') {
+        output = `${this.text} ${frame} (${elapsed}ms)`;
+      } else {
+        // Default is 'left': spinner frame comes first.
+        output = `${frame} ${this.text} (${elapsed}ms)`;
+      }
     }
 
     process.stdout.write(output);
 
-    // Return the cursor to the bottom if the function exists.
+    // Restore the cursor position.
     if (typeof process.stdout.moveCursor === 'function') {
       process.stdout.moveCursor(0, Spinner.spinnerInstances.length - index);
     }

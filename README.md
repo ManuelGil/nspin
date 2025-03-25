@@ -22,9 +22,11 @@
   - [Installation](#installation)
   - [Usage Examples](#usage-examples)
     - [Example 1: Simple Spinner Initialization](#example-1-simple-spinner-initialization)
-    - [Example 2: Spinner with Dynamic Updates](#example-2-spinner-with-dynamic-updates)
+    - [Example 2: Spinner with Dynamic Message Updates](#example-2-spinner-with-dynamic-message-updates)
     - [Example 3: Concurrent Spinners](#example-3-concurrent-spinners)
-    - [Example 4: Degraded Output in Non-TTY Environments](#example-4-degraded-output-in-non-tty-environments)
+    - [Example 4: Dynamic Update of Spinner Frames](#example-4-dynamic-update-of-spinner-frames)
+    - [Example 5: Configuring Spinner Position](#example-5-configuring-spinner-position)
+    - [Example 6: Degraded Output in Non-TTY Environments](#example-6-degraded-output-in-non-tty-environments)
   - [API Reference](#api-reference)
     - [Spinner Class](#spinner-class)
   - [Build \& Publication](#build--publication)
@@ -53,6 +55,12 @@
 - **Adaptive Output:**
   Automatically adjusts for both TTY and non-TTY environments, ensuring clear output regardless of the terminal's capabilities.
 
+- **Dynamic Update of Frames:**
+  Change the spinner animation frames on the fly using the `updateFrames(newFrames: string[])` method.
+
+- **Position Configuration:**
+  Configure the spinner to appear either on the left (default) or right of the text via the `position` option.
+
 ## Requirements
 
 **nspin** requires Node.js version **22 or higher**. This requirement ensures access to modern features such as:
@@ -70,13 +78,19 @@
   Leverages the modern `styleText` API for styling spinner frames, eliminating manual ANSI codes.
 
 - **Chainable API:**
-  Methods like `start`, `updateText`, and `stop` return the spinner instance for fluent usage.
+  Methods like `start`, `updateText`, `updateFrames`, and `stop` return the spinner instance for fluent usage.
 
 - **Multiple Spinner Support:**
   Easily manage several concurrent spinners without interference.
 
 - **Modular & Extensible:**
   Designed following SOLID principles for clean, maintainable, and extendable code.
+
+- **Dynamic Update of Frames:**
+  Change the spinner animation frames on the fly using `updateFrames(newFrames: string[])`.
+
+- **Position Configuration:**
+  Choose whether the spinner appears to the left or right of the message via the `position` option.
 
 ## Installation
 
@@ -97,8 +111,11 @@ A basic example that shows how to initialize and run a spinner.
 ```typescript
 import { Spinner } from "nspin";
 
+// Simple Rotation spinner frames
+const simpleRotation = ["|", "/", "-", "\\"];
+
 const spinner = new Spinner({
-  frames: ["-", "\\", "|", "/"],
+  frames: simpleRotation,
   interval: 100
 });
 
@@ -108,16 +125,19 @@ setTimeout(() => {
 }, 3000);
 ```
 
-### Example 2: Spinner with Dynamic Updates
+### Example 2: Spinner with Dynamic Message Updates
 
 This example demonstrates how to update the spinner's message in real time.
 
 ```typescript
 import { Spinner } from "nspin";
 
+// Blinking Dot spinner frames
+const blinkingDot = ["   ", ".  ", ".. ", "...", " ..", "  ."];
+
 const spinner = new Spinner({
-  frames: ["⠋", "⠙", "⠹", "⠸"],
-  interval: 80,
+  frames: blinkingDot,
+  interval: 120,
   format: "green"
 });
 
@@ -141,8 +161,14 @@ This example shows how to run multiple spinners at the same time to simulate par
 ```typescript
 import { Spinner } from "nspin";
 
-const spinner1 = new Spinner({ frames: ["◐", "◓", "◑", "◒"], interval: 100, format: "blue" });
-const spinner2 = new Spinner({ frames: ["-", "\\", "|", "/"], interval: 120, format: "magenta" });
+// Moon Phases Spinner
+export const moonPhasesSpinner = ["◐", "◓", "◑", "◒"];
+
+// Parentheses Rotation spinner frames
+const parenthesesRotation = ["(-)", "(\\)", "(|)", "(/)"];
+
+const spinner1 = new Spinner({ frames: moonPhasesSpinner, interval: 100, format: "blue" });
+const spinner2 = new Spinner({ frames: parenthesesRotation, interval: 120, format: "magenta" });
 
 spinner1.start("Task 1: Downloading...");
 spinner2.start("Task 2: Processing...");
@@ -156,20 +182,108 @@ setTimeout(() => {
 }, 5000);
 ```
 
-### Example 4: Degraded Output in Non-TTY Environments
+### Example 4: Dynamic Update of Spinner Frames
+
+In this example, we demonstrate how to change the spinner frames dynamically during runtime.
+
+```typescript
+import { Spinner } from "nspin";
+
+// Bouncing Ball spinner frames
+const bouncingBall = [
+  "(o    )",
+  "( o   )",
+  "(  o  )",
+  "(   o )",
+  "(    o)",
+  "(   o )",
+  "(  o  )",
+  "( o   )"
+];
+
+// Rotating Dot Spinner frames
+const rotatingDotSpinner = [".", "o", "O", "o"];
+
+const spinner = new Spinner({
+  frames: bouncingBall,
+  interval: 100
+});
+spinner.start("Task in progress...");
+
+// Update spinner frames after 5 seconds
+setTimeout(() => {
+  spinner.updateFrames(rotatingDotSpinner);
+  spinner.updateText("Now using a different spinner...");
+}, 5000);
+
+// Stop spinner after 10 seconds
+setTimeout(() => spinner.stop("Done!"), 10000);
+```
+
+### Example 5: Configuring Spinner Position
+
+This example shows how to configure the spinner's position relative to the text.
+
+```typescript
+import { Spinner } from "nspin";
+
+// Progress Bar spinner frames
+const progressBar = [
+  "[    ]",
+  "[=   ]",
+  "[==  ]",
+  "[=== ]",
+  "[====]",
+  "[ ===]",
+  "[  ==]",
+  "[   =]"
+];
+
+// Spinner with left alignment (default)
+const spinnerLeft = new Spinner({
+  frames: progressBar,
+  interval: 100,
+  position: 'left'
+});
+spinnerLeft.start("Left aligned spinner");
+
+// Spinner with right alignment
+const spinnerRight = new Spinner({
+  frames: progressBar,
+  interval: 100,
+  position: 'right'
+});
+spinnerRight.start("Right aligned spinner");
+
+// Stop both spinners after 8 seconds
+setTimeout(() => {
+  spinnerLeft.stop("Left spinner done");
+  spinnerRight.stop("Right spinner done");
+}, 8000);
+```
+
+### Example 6: Degraded Output in Non-TTY Environments
 
 This example demonstrates how **nspin** degrades gracefully when running in a non-TTY environment.
 
 ```typescript
 import { Spinner } from "nspin";
 
-// This check simulates a non-TTY environment for demonstration purposes.
+// Crosshair Spinner
+const crosshairSpinner = [
+  "[+]",
+  "[x]",
+  "[-]",
+  "[x]"
+];
+
+// Simulate non-TTY mode for demonstration (in practice, this is determined by process.stdout.isTTY)
 if (!process.stdout.isTTY) {
   console.log("Non-TTY mode active.");
 }
 
 const spinner = new Spinner({
-  frames: ["⠋", "⠙", "⠹", "⠸"],
+  frames: parenthesesRotation,
   interval: 100,
   format: "yellow"
 });
@@ -191,12 +305,16 @@ setTimeout(() => {
   - `frames`: An array of spinner frames (e.g., `["-", "\\", "|", "/"]`).
   - `interval` (optional): Time between frames in milliseconds (default is 80).
   - `format` (optional): Format options for styling the spinner (passed to `styleText`).
+  - `position` (optional): Position of the spinner relative to the text. Accepted values are `'left'` (default) or `'right'`.
 
 - **`start(text?: string): this`**
   Starts the spinner with an optional initial message.
 
 - **`updateText(newText: string): this`**
   Updates the spinner's message in real time.
+
+- **`updateFrames(newFrames: string[]): this`**
+  Dynamically updates the spinner frames and resets the frame counter.
 
 - **`stop(finalText?: string): this`**
   Stops the spinner and displays the final message.
