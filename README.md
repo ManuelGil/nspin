@@ -117,9 +117,8 @@ const simpleRotation = ["|", "/", "-", "\\"];
 const spinner = new Spinner({
   frames: simpleRotation,
   interval: 100
-});
+}).start("Loading...");
 
-spinner.start("Loading...");
 setTimeout(() => {
   spinner.stop("Done!");
 }, 3000);
@@ -139,19 +138,18 @@ const spinner = new Spinner({
   frames: blinkingDot,
   interval: 120,
   format: "green"
-});
-
-spinner.start("Initializing...");
+}).start("Initializing...");
 
 let progress = 0;
 const interval = setInterval(() => {
-  progress += 20;
+  progress += 10;
   spinner.updateText(`Progress: ${progress}%`);
+
   if (progress >= 100) {
     clearInterval(interval);
     spinner.stop("Task complete!");
   }
-}, 1000);
+}, 500);
 ```
 
 ### Example 3: Concurrent Spinners
@@ -164,14 +162,20 @@ import { Spinner } from "nspin";
 // Moon Phases Spinner
 export const moonPhasesSpinner = ["◐", "◓", "◑", "◒"];
 
+const spinner1 = new Spinner({
+  frames: moonPhasesSpinner,
+  interval: 100,
+  format: "blue"
+}).start("Task 1: Downloading...");
+
 // Parentheses Rotation spinner frames
 const parenthesesRotation = ["(-)", "(\\)", "(|)", "(/)"];
 
-const spinner1 = new Spinner({ frames: moonPhasesSpinner, interval: 100, format: "blue" });
-const spinner2 = new Spinner({ frames: parenthesesRotation, interval: 120, format: "magenta" });
-
-spinner1.start("Task 1: Downloading...");
-spinner2.start("Task 2: Processing...");
+const spinner2 = new Spinner({
+  frames: parenthesesRotation,
+  interval: 120,
+  format: "magenta"
+}).start("Task 2: Processing...");
 
 setTimeout(() => {
   spinner1.stop("Task 1 complete!");
@@ -207,8 +211,7 @@ const rotatingDotSpinner = [".", "o", "O", "o"];
 const spinner = new Spinner({
   frames: bouncingBall,
   interval: 100
-});
-spinner.start("Task in progress...");
+}).start("Task in progress...");
 
 // Update spinner frames after 5 seconds
 setTimeout(() => {
@@ -244,16 +247,14 @@ const spinnerLeft = new Spinner({
   frames: progressBar,
   interval: 100,
   position: 'left'
-});
-spinnerLeft.start("Left aligned spinner");
+}).start("Left aligned spinner");
 
 // Spinner with right alignment
 const spinnerRight = new Spinner({
   frames: progressBar,
   interval: 100,
   position: 'right'
-});
-spinnerRight.start("Right aligned spinner");
+}).start("Right aligned spinner");
 
 // Stop both spinners after 8 seconds
 setTimeout(() => {
@@ -286,9 +287,8 @@ const spinner = new Spinner({
   frames: parenthesesRotation,
   interval: 100,
   format: "yellow"
-});
+}).start("Running in non-TTY mode...");
 
-spinner.start("Running in non-TTY mode...");
 setTimeout(() => {
   spinner.stop("Finished in non-TTY mode.");
 }, 3000);

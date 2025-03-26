@@ -1,10 +1,14 @@
 import { Spinner } from 'nspin';
 
-const spinner1 = new Spinner({ frames: ['-', '\\', '|', '/'], interval: 100 });
-const spinner2 = new Spinner({ frames: ['⠋', '⠙', '⠹', '⠸'], interval: 150 });
+const spinner1 = new Spinner({
+  frames: ['-', '\\', '|', '/'],
+  interval: 100,
+}).start('Downloading file 1...');
 
-spinner1.start('Downloading file 1...');
-spinner2.start('Downloading file 2...');
+const spinner2 = new Spinner({
+  frames: ['⠋', '⠙', '⠹', '⠸'],
+  interval: 150,
+}).start('Downloading file 2...');
 
 setTimeout(() => {
   spinner1.stop('✅ File 1 downloaded!');
