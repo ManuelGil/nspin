@@ -1,4 +1,4 @@
-import type { FormatOptions } from './format-options';
+import type { FormatOptions } from '.';
 
 /**
  * SpinnerOptions: The spinner options.

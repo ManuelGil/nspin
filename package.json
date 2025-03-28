@@ -1,7 +1,7 @@
 {
 	"name": "nspin",
 	"description": "Lightweight and efficient Node.js spinner package using native features",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"license": "MIT",
 	"author": "ManuelGil",
 	"sponsor": {
@@ -48,7 +48,7 @@
 		"node": ">=22.0.0"
 	},
 	"scripts": {
-		"clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+		"clean": "rm -rf dist",
 		"dev": "vite",
 		"build": "cross-env NODE_ENV=development vite build",
 		"build:prod": "cross-env NODE_ENV=production vite build",
@@ -61,45 +61,35 @@
 		"lint": "biome lint --write",
 		"lint:check": "biome check --write",
 		"ts-check": "tsc --noEmit",
-		"check-format": "prettier --check .",
-		"check-exports": "attw --pack .",
 		"link": "cd dist && npm link",
 		"audit": "npm audit",
 		"validate": "npm run lint:check && npm run test && npm run audit",
 		"ci": "npm run clean && npm run build && npm run validate",
-		"prepublishOnly": "npm run build:prod",
+		"prepublishOnly": "npm run build:prod && cp README.npm.md README.md",
 		"publish:local": "npm publish --registry http://localhost:4873",
 		"publish:public": "npm publish --access=public",
-		"prepare": "husky",
-		"release": "release-it"
+		"prepare": "husky"
 	},
 	"devDependencies": {
-		"@arethetypeswrong/cli": "^0.17.4",
 		"@biomejs/biome": "1.9.4",
 		"@commitlint/cli": "^19.8.0",
 		"@commitlint/config-conventional": "^19.8.0",
-		"@release-it/conventional-changelog": "^10.0.0",
-		"@release-it/keep-a-changelog": "^6.0.0",
 		"@rollup/plugin-commonjs": "^28.0.3",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^16.0.1",
 		"@rollup/plugin-replace": "^6.0.2",
 		"@rollup/plugin-swc": "^0.4.0",
 		"@types/node": "^22.13.10",
-		"@vitejs/plugin-react-swc": "^3.8.1",
 		"cross-env": "^7.0.3",
-		"globals": "^16.0.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^15.4.3",
-		"release-it": "^18.1.2",
-		"rollup-plugin-add-shebang": "^0.3.1",
 		"rollup-plugin-peer-deps-external": "^2.2.4",
 		"rollup-plugin-visualizer": "^5.14.0",
 		"terser": "^5.39.0",
-		"tsup": "^8.4.0",
 		"typescript": "^5.8.2",
 		"vite": "^6.2.3",
 		"vite-plugin-compression": "^0.5.1",
+		"vite-plugin-dts": "^4.5.3",
 		"vite-tsconfig-paths": "^5.1.4",
 		"vitest": "^3.0.8"
 	},
@@ -108,21 +98,5 @@
 			"biome format --write",
 			"biome lint --write"
 		]
-	},
-	"release-it": {
-		"git": {
-			"commitMessage": "chore: :bookmark: release ${version}"
-		},
-		"github": {
-			"release": true
-		},
-		"npm": {
-			"publish": false
-		},
-		"plugins": {
-			"@release-it/keep-a-changelog": {
-				"filename": "CHANGELOG.md"
-			}
-		}
 	}
 }

@@ -103,7 +103,7 @@ Ensure that all tests pass before creating a pull request.
 
 - **Debugging:**
 
-  - Use your IDE’s debugging tools (e.g., VSCode Debugger) to set breakpoints and inspect variables.
+  - Use your IDE's debugging tools (e.g., VSCode Debugger) to set breakpoints and inspect variables.
   - For command-line debugging, you can add `console.log` or `debugger` statements as needed.
 
 - **Linting & Formatting:**

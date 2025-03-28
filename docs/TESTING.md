@@ -76,7 +76,7 @@ When writing tests for **nspin**, consider the following guidelines:
   ```
 
 - **Mocking and Spies:**
-  If necessary, use Vitest’s mocking features to spy on functions (e.g., `process.stdout` methods) or simulate environments where certain functions are not available.
+  If necessary, use Vitest's mocking features to spy on functions (e.g., `process.stdout` methods) or simulate environments where certain functions are not available.
 
 - **Testing Asynchronous Code:**
   Use async/await or return a promise when testing asynchronous operations, such as long-running spinner updates.
@@ -148,11 +148,11 @@ Some tests might fail because functions such as `process.stdout.clearLine` or `c
 
 ### 2. TypeScript Compilation Issues
 
-Ensure that your `tsconfig.json` is correctly configured and that Vitest is able to pick up your TypeScript configuration. Verify that `tsup` or your build tool isn’t interfering with the test runner.
+Ensure that your `tsconfig.json` is correctly configured and that Vitest is able to pick up your TypeScript configuration. Verify that `tsup` or your build tool isn't interfering with the test runner.
 
 ### 3. Environment Mismatches
 
-Double-check that you’re running tests with Node.js v22+ to leverage native APIs required by **nspin**.
+Double-check that you're running tests with Node.js v22+ to leverage native APIs required by **nspin**.
 
 ---
 
