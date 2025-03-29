@@ -33,7 +33,7 @@
 |  |  ├── 📄 modifiers.ts
 |  |  └── 📄 snipper-options.ts
 |  └── 📄 index.ts
-├── 📂 test/
+├── 📂 tests/
 |  └── 📄 index.test.ts
 ├── 📄 CHANGELOG.md
 ├── 📄 commitlint.config.js

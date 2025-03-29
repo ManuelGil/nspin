@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2025-03-28
+
+### Added
+
+- Add `pause()` and `resume()` methods to allow temporarily halting the spinner without stopping it.
+- Add `restart()` method to allow stopping and reinitializing the spinner without losing its configuration.
+- Add `setInterval(newInterval)` method to dynamically adjust the spinner's update frequency.
+- Add `getInterval()` method to inspect the current interval of the spinner.
+- Add `getCurrentFrame()`, `getElapsedTime()`, and `getTimerId()` methods to inspect the spinner's internal state.
+
 ## [1.5.0] - 2025-03-27
 
 ### Changed
@@ -68,7 +78,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the npm package.
 
-[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/ManuelGil/nspin/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/ManuelGil/nspin/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/ManuelGil/nspin/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/ManuelGil/nspin/compare/v1.2.0...v1.3.0

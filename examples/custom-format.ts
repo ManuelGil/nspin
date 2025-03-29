@@ -1,11 +1,13 @@
+// custom-format.ts
 import { Spinner } from 'nspin';
 
+// Spinner with custom format (e.g., using a color/style) and unique frames.
 const spinner = new Spinner({
-  frames: ['◐', '◓', '◑', '◒'],
+  frames: ['◰', '◳', '◲', '◱'],
   interval: 120,
-  format: ['cyan', 'underline'],
-}).start('Loading styled spinner...');
+  format: 'magenta', // Custom style
+}).start('Custom Format Task: Processing...');
 
 setTimeout(() => {
-  spinner.stop('🎨 Styled complete!');
-}, 4000);
+  spinner.stop('✅ Custom Format Complete!');
+}, 3000);

@@ -59,7 +59,7 @@
 ### 5. Testing
 
 - **Tool:** Vitest
-- **Location:** `test/`
+- **Location:** `tests/`
 - **Description:**
   Unit tests cover the core functionality, including spinner behavior, chaining, and instance management. The testing framework is configured to work with the TypeScript source and output bundles.
 

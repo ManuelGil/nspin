@@ -1,7 +1,7 @@
 {
 	"name": "nspin",
 	"description": "Lightweight and efficient Node.js spinner package using native features",
-	"version": "1.5.0",
+	"version": "1.6.0",
 	"license": "MIT",
 	"author": "ManuelGil",
 	"sponsor": {

@@ -61,7 +61,7 @@ nspin/
 │   ├── helpers/           # Utility functions (e.g., console handling)
 │   ├── types/             # Type definitions (SpinnerOptions, FormatOptions, etc.)
 │   └── index.ts           # Main entry point (Spinner class and exports)
-├── test/                  # Unit tests
+├── tests/                  # Unit tests
 ├── CHANGELOG.md           # Changelog file
 ├── README.md              # General project description
 ├── CONTRIBUTING.md        # Contribution guidelines

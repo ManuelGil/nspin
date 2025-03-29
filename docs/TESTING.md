@@ -50,7 +50,7 @@ Make sure your environment meets the required Node.js version (v22+) to ensure p
 When writing tests for **nspin**, consider the following guidelines:
 
 - **Location:**
-  All test files should be placed in the `test/` directory. Files ending in `.test.ts` will be automatically picked up by Vitest.
+  All test files should be placed in the `tests/` directory. Files ending in `.test.ts` will be automatically picked up by Vitest.
 
 - **Structure:**
   Use the `describe` and `it` blocks to organize tests. For example:

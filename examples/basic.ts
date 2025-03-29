@@ -1,7 +1,12 @@
+// basic.ts
 import { Spinner } from 'nspin';
 
-const spinner = new Spinner({}).start('Processing...');
+// Basic spinner using a simple rotation pattern.
+const spinner = new Spinner({
+  frames: ['-', '\\', '|', '/'],
+  interval: 100,
+}).start('Basic Task: Loading...');
 
 setTimeout(() => {
-  spinner.stop('✅ Done!');
+  spinner.stop('✅ Basic Task Complete!');
 }, 3000);
