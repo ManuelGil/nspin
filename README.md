@@ -26,7 +26,8 @@
     - [Example 3: Concurrent Spinners](#example-3-concurrent-spinners)
     - [Example 4: Dynamic Update of Spinner Frames](#example-4-dynamic-update-of-spinner-frames)
     - [Example 5: Configuring Spinner Position](#example-5-configuring-spinner-position)
-    - [Example 6: Degraded Output in Non-TTY Environments](#example-6-degraded-output-in-non-tty-environments)
+    - [Example 6: Using Pause/Resume, Interval Updates, and State Inspection](#example-6-using-pauseresume-interval-updates-and-state-inspection)
+    - [Example 7: Degraded Output in Non-TTY Environments](#example-7-degraded-output-in-non-tty-environments)
   - [API Reference](#api-reference)
     - [Spinner Class](#spinner-class)
   - [Build \& Publication](#build--publication)
@@ -61,6 +62,9 @@
 - **Position Configuration:**
   Configure the spinner to appear either on the left (default) or right of the text via the `position` option.
 
+- **Enhanced Control & Extensibility:**
+  With new methods like `pause()`, `resume()`, and `restart()`, along with state inspection methods (`getCurrentFrame()`, `getElapsedTime()`, and `getTimerId()`), you can control the animation in real time, facilitate smooth transitions, and build robust extensions (like an ExtendedSpinner) without depender de soluciones internas o hacks.
+
 ## Requirements
 
 **nspin** requires Node.js version **22 or higher**. This requirement ensures access to modern features such as:
@@ -78,19 +82,31 @@
   Leverages the modern `styleText` API for styling spinner frames, eliminating manual ANSI codes.
 
 - **Chainable API:**
-  Methods like `start`, `updateText`, `updateFrames`, and `stop` return the spinner instance for fluent usage.
+  Methods like `start`, `updateText`, `updateFrames`, `pause`, `resume`, `restart`, `setInterval`, and `stop` return the spinner instance for fluent usage.
 
 - **Multiple Spinner Support:**
   Easily manage several concurrent spinners without interference.
 
 - **Modular & Extensible:**
-  Designed following SOLID principles for clean, maintainable, and extendable code.
+  Designed following SOLID principles for clean, maintainable, and extendable code. The internal state is exposed via dedicated getters to support extensions like ExtendedSpinner.
 
 - **Dynamic Update of Frames:**
   Change the spinner animation frames on the fly using `updateFrames(newFrames: string[])`.
 
 - **Position Configuration:**
   Choose whether the spinner appears to the left or right of the message via the `position` option.
+
+- **Enhanced Control:**
+  Use `pause()` to stop the spinner temporarily and `resume()` to continue the animation. Adjust the update interval dynamically with `setInterval(newInterval: number)` and inspect it with `getInterval()`.
+
+- **State Inspection:**
+  Access the internal state through:
+  - `getCurrentFrame()`: Returns the current frame index.
+  - `getElapsedTime()`: Returns the elapsed time in milliseconds.
+  - `getTimerId()`: Returns the current timer identifier.
+
+- **Restart Capability:**
+  The `restart()` method allows you to stop and restart the spinner without perder la configuración actual.
 
 ## Installation
 
@@ -160,7 +176,7 @@ This example shows how to run multiple spinners at the same time to simulate par
 import { Spinner } from "nspin";
 
 // Moon Phases Spinner
-export const moonPhasesSpinner = ["◐", "◓", "◑", "◒"];
+const moonPhasesSpinner = ["◐", "◓", "◑", "◒"];
 
 const spinner1 = new Spinner({
   frames: moonPhasesSpinner,
@@ -263,7 +279,48 @@ setTimeout(() => {
 }, 8000);
 ```
 
-### Example 6: Degraded Output in Non-TTY Environments
+### Example 6: Using Pause/Resume, Interval Updates, and State Inspection
+
+This example shows how to use the new `pause()`, `resume()`, `setInterval()`, and state inspection methods to control the spinner animation dynamically.
+
+```typescript
+import { Spinner } from "nspin";
+
+const spinner = new Spinner({
+  frames: ["|", "/", "-", "\\"],
+  interval: 100
+}).start("Processing...");
+
+// Pause the spinner after 2 seconds
+setTimeout(() => {
+  spinner.pause();
+  console.log("Spinner paused.");
+  console.log(`Current Frame: ${spinner.getCurrentFrame()}`);
+}, 2000);
+
+// Resume the spinner after 4 seconds
+setTimeout(() => {
+  spinner.resume();
+  console.log("Spinner resumed.");
+}, 4000);
+
+// Update the spinner interval after 6 seconds
+setTimeout(() => {
+  spinner.setInterval(50);
+  console.log(`New interval: ${spinner.getInterval()}ms`);
+}, 6000);
+
+// Restart the spinner after 7 seconds (without losing configuration)
+setTimeout(() => {
+  spinner.restart();
+  console.log("Spinner restarted.");
+}, 7000);
+
+// Stop the spinner after 8 seconds
+setTimeout(() => spinner.stop("Process complete!"), 8000);
+```
+
+### Example 7: Degraded Output in Non-TTY Environments
 
 This example demonstrates how **nspin** degrades gracefully when running in a non-TTY environment.
 
@@ -284,7 +341,7 @@ if (!process.stdout.isTTY) {
 }
 
 const spinner = new Spinner({
-  frames: parenthesesRotation,
+  frames: crosshairSpinner,
   interval: 100,
   format: "yellow"
 }).start("Running in non-TTY mode...");
@@ -315,6 +372,30 @@ setTimeout(() => {
 
 - **`updateFrames(newFrames: string[]): this`**
   Dynamically updates the spinner frames and resets the frame counter.
+
+- **`pause(): this`**
+  Temporarily pauses the spinner animation without resetting its state.
+
+- **`resume(): this`**
+  Resumes the spinner animation if it was paused.
+
+- **`restart(): this`**
+  Stops and restarts the spinner using the current configuration, preserving its state.
+
+- **`getCurrentFrame(): number`**
+  Returns the current frame index of the spinner.
+
+- **`getInterval(): number`**
+  Returns the current interval (in milliseconds) of the spinner.
+
+- **`setInterval(newInterval: number): this`**
+  Sets a new interval for the spinner and resets the timer if active.
+
+- **`getElapsedTime(): number`**
+  Returns the elapsed time in milliseconds since the spinner started.
+
+- **`getTimerId(): ReturnType<typeof setInterval> | null`**
+  Returns the current timer identifier or null if no timer is active.
 
 - **`stop(finalText?: string): this`**
   Stops the spinner and displays the final message.

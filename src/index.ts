@@ -21,124 +21,137 @@ export class Spinner {
   // Properties
   // --------------------------------------------------
 
-  // Private properties
+  // Protected properties
 
   /**
    * frames: The frames for the spinner animation.
    * The frames are displayed in sequence to create the spinner animation.
    *
    * @type {string[]}
-   * @private
+   * @protected
    * @example
    * console.log(spinner.frames);
    *
    * @returns {string} - The frames for the spinner animation
    */
-  private frames: string[];
+  protected frames: string[];
 
   /**
    * interval: The interval for the spinner animation.
    * The interval is the time between each frame of the spinner animation.
    *
    * @type {number}
-   * @private
+   * @protected
    * @example
    * console.log(spinner.interval);
    *
    * @returns {number} - The interval for the spinner animation
    */
-  private interval: number;
+  protected interval: number;
 
   /**
    * format: The format for the spinner animation.
    * The format is used to change the style of the text in the console.
    *
    * @type {FormatOptions}
-   * @private
+   * @protected
    * @example
    * console.log(spinner.format);
    *
    * @returns {FormatOptions} - The format for the spinner animation
    */
-  private format: FormatOptions;
+  protected format: FormatOptions;
 
   /**
    * timer: The timer for the spinner animation.
    * The timer is used to control the spinner animation.
    *
    * @type {ReturnType<typeof setInterval> | null}
-   * @private
+   * @protected
    * @example
    * console.log(spinner.timer);
    *
    * @returns {ReturnType<typeof setInterval> | null} - The timer for the spinner animation
    */
-  private timer: ReturnType<typeof setInterval> | null = null;
+  protected timer: ReturnType<typeof setInterval> | null = null;
 
   /**
    * currentFrame: The current frame for the spinner animation.
    * The current frame is used to display the spinner animation.
    *
    * @type {number}
-   * @private
+   * @protected
    * @example
    * console.log(spinner.currentFrame);
    *
    * @returns {number} - The current frame for the spinner animation
    */
-  private currentFrame: number = 0;
+  protected currentFrame: number = 0;
 
   /**
    * text: The text for the spinner animation.
    * The text is displayed alongside the spinner animation.
    *
    * @type {string}
-   * @private
+   * @protected
    * @example
    * console.log(spinner.text);
    *
    * @returns {string} - The text for the spinner animation
    */
-  private text: string = '';
+  protected text: string = '';
 
   /**
    * startTime: The start time for the spinner animation.
    * The start time is used to calculate the elapsed time of the spinner animation.
    *
    * @type {number}
-   * @private
+   * @protected
    * @example
    * console.log(spinner.startTime);
    *
    * @returns {number} - The start time for the spinner animation
    */
-  private startTime: number = 0;
+  protected startTime: number = 0;
 
   /**
    * position: The position of the spinner animation.
    * The position is used to determine where the spinner animation is displayed in the console.
    *
    * @type {'left' | 'right'}
-   * @private
+   * @protected
    * @example
    * console.log(spinner.position);
    *
    * @returns {'left' | 'right'} - The position of the spinner animation
    */
-  private position: 'left' | 'right' = 'left';
+  protected position: 'left' | 'right' = 'left';
+
+  /**
+   * paused: The paused state of the spinner animation.
+   * The paused state is used to determine if the spinner animation is paused.
+   *
+   * @type {boolean}
+   * @protected
+   * @example
+   * console.log(spinner.paused);
+   *
+   * @returns {boolean} - The paused state of the spinner animation
+   */
+  protected paused: boolean = false;
 
   /**
    * spinnerInstances: The spinner instances.
    * The spinner instances are used to manage multiple spinner animations concurrently.
    *
    * @type {Spinner[]}
-   * @private
+   * @protected
    * @example
    * console.log(Spinner.spinnerInstances);
    *
    * @returns {Spinner[]} - The spinner instances
    */
-  private static spinnerInstances: Spinner[] = [];
+  protected static spinnerInstances: Spinner[] = [];
 
   // --------------------------------------------------
   // Constructor
@@ -220,6 +233,65 @@ export class Spinner {
   }
 
   /**
+   * Pauses the spinner animation without resetting its state.
+   * It clears the current timer and marks the spinner as paused.
+   *
+   * @public
+   * @example
+   * spinner.pause();
+   *
+   * @returns The Spinner instance for chaining.
+   */
+  public pause(): this {
+    if (!this.paused && this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+      this.paused = true;
+    }
+
+    return this;
+  }
+
+  /**
+   * Resumes the spinner animation if it was paused.
+   * It restarts the interval using the preserved state.
+   *
+   * @public
+   * @example
+   * spinner.resume();
+   *
+   * @returns The Spinner instance for chaining.
+   */
+  public resume(): this {
+    if (this.paused) {
+      // Restart the render interval without modifying currentFrame or startTime.
+      this.timer = setInterval(() => this.render(), this.interval);
+      this.paused = false;
+    }
+
+    return this;
+  }
+
+  /**
+   * Restarts the spinner animation using the current configuration.
+   * It stops the current animation and starts a new one with the same text.
+   *
+   * @public
+   * @example
+   * spinner.restart();
+   *
+   * @returns The Spinner instance for chaining.
+   */
+  public restart(): this {
+    this.stop();
+
+    // Reset currentFrame to ensure restart from the beginning.
+    this.currentFrame = 0;
+
+    return this.start(this.text);
+  }
+
+  /**
    * Dynamically updates the spinner frames and resets the frame counter.
    * The new frames are used for the spinner animation.
    *
@@ -295,13 +367,92 @@ export class Spinner {
     return this;
   }
 
-  // Private methods
+  /**
+   * Returns the current interval (in milliseconds) of the spinner.
+   * This method is used to retrieve the interval set for the spinner animation.
+   *
+   * @public
+   * @example
+   * const interval = spinner.getInterval();
+   *
+   * @returns {number} The current interval in milliseconds.
+   */
+  public getInterval(): number {
+    return this.interval;
+  }
+
+  /**
+   * Gets the index of the current frame.
+   * This method is used to retrieve the current frame index of the spinner animation.
+   *
+   * @public
+   * @example
+   * const currentFrame = spinner.getCurrentFrame();
+   *
+   * @returns The current frame index.
+   */
+  public getCurrentFrame(): number {
+    return this.currentFrame;
+  }
+
+  /**
+   * Sets a new interval for the spinner and resets the timer if active.
+   * This method is used to change the interval of the spinner animation.
+   *
+   * @public
+   * @example
+   * spinner.setInterval(100);
+   *
+   * @param newInterval The new interval in milliseconds.
+   *
+   * @returns The Spinner instance for chaining.
+   */
+  public setInterval(newInterval: number): this {
+    this.interval = newInterval;
+
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = setInterval(() => this.render(), this.interval);
+    }
+
+    return this;
+  }
+
+  /**
+   * Gets the elapsed time since the spinner started.
+   * This method is used to retrieve the elapsed time of the spinner animation.
+   *
+   * @public
+   * @example
+   * const elapsedTime = spinner.getElapsedTime();
+   *
+   * @returns The elapsed time in milliseconds.
+   */
+  public getElapsedTime(): number {
+    return Math.floor(performance.now() - this.startTime);
+  }
+
+  /**
+   * Gets the identifier of the current timer interval.
+   * This method is used to retrieve the timer identifier of the spinner animation.
+   *
+   * @public
+   * @example
+   * const timerId = spinner.getTimerId();
+   *
+   * @returns The timer identifier or null if not active.
+   */
+  public getTimerId(): ReturnType<typeof setInterval> | null {
+    return this.timer;
+  }
+
+  // protected methods
 
   /**
    * Renders the spinner line at its designated position.
    * The spinner line is displayed in the console.
    *
-   * @private
+   * @protected
    * @example
    * spinner.render();
    *
@@ -309,7 +460,7 @@ export class Spinner {
    *
    * @returns void - Nothing
    */
-  private render(finalText?: string): void {
+  protected render(finalText?: string): void {
     // For non-TTY environments, output degrades gracefully.
     if (!process.stdout.isTTY) {
       if (finalText !== undefined) {
@@ -386,13 +537,13 @@ export class Spinner {
    * Cleanup function to clear the spinner on process exit.
    * The cleanup function is used to remove the spinner animation from the console.
    *
-   * @private
+   * @protected
    * @example
    * spinner.cleanup();
    *
    * @returns void - Nothing
    */
-  private cleanup = (): void => {
+  protected cleanup = (): void => {
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
