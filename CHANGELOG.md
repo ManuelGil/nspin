@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2025-03-30
+
+### Added
+
+- Add `getCurrentText()`, `getCurrentFrame()`, and `getStartTime()` getters to retrieve the current text, frame, and start time of the spinner.
+
+### Changed
+
+- Refactored the `render()` method to use the new helper function for generating output, enhancing modularity and extensibility.
+
 ## [1.6.0] - 2025-03-28
 
 ### Added
@@ -78,7 +88,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the npm package.
 
-[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1..0...HEAD
+[1.7.0]: https://github.com/ManuelGil/nspin/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/ManuelGil/nspin/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/ManuelGil/nspin/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/ManuelGil/nspin/compare/v1.3.0...v1.4.0

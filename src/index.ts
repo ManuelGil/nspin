@@ -5,7 +5,7 @@ import { clearLine } from './helpers/console';
 import type { FormatOptions, SpinnerOptions } from './types';
 
 /**
- * Spinner: The spinner class.
+ * Spinner: Class to display a spinner animation in the console.
  * This class is used to display a spinner animation in the console.
  *
  * @public
@@ -24,7 +24,7 @@ export class Spinner {
   // Protected properties
 
   /**
-   * frames: The frames for the spinner animation.
+   * Array of frames used for the spinner animation.
    * The frames are displayed in sequence to create the spinner animation.
    *
    * @type {string[]}
@@ -37,8 +37,8 @@ export class Spinner {
   protected frames: string[];
 
   /**
-   * interval: The interval for the spinner animation.
-   * The interval is the time between each frame of the spinner animation.
+   * Interval (in ms) between each frame.
+   * This controls the speed of the spinner animation.
    *
    * @type {number}
    * @protected
@@ -50,8 +50,8 @@ export class Spinner {
   protected interval: number;
 
   /**
-   * format: The format for the spinner animation.
-   * The format is used to change the style of the text in the console.
+   * Format options for styling the spinner output.
+   * This can be a string or an array of strings.
    *
    * @type {FormatOptions}
    * @protected
@@ -63,8 +63,8 @@ export class Spinner {
   protected format: FormatOptions;
 
   /**
-   * timer: The timer for the spinner animation.
-   * The timer is used to control the spinner animation.
+   * Timer handle returned by setInterval.
+   * This is used to control the spinner animation.
    *
    * @type {ReturnType<typeof setInterval> | null}
    * @protected
@@ -76,8 +76,8 @@ export class Spinner {
   protected timer: ReturnType<typeof setInterval> | null = null;
 
   /**
-   * currentFrame: The current frame for the spinner animation.
-   * The current frame is used to display the spinner animation.
+   * Index of the current frame in the frames array.
+   * This is used to keep track of which frame to display next.
    *
    * @type {number}
    * @protected
@@ -89,8 +89,8 @@ export class Spinner {
   protected currentFrame: number = 0;
 
   /**
-   * text: The text for the spinner animation.
-   * The text is displayed alongside the spinner animation.
+   * Text displayed alongside the spinner.
+   * This can be a message or status update.
    *
    * @type {string}
    * @protected
@@ -102,8 +102,8 @@ export class Spinner {
   protected text: string = '';
 
   /**
-   * startTime: The start time for the spinner animation.
-   * The start time is used to calculate the elapsed time of the spinner animation.
+   * Timestamp when the spinner was started.
+   * This is used to calculate elapsed time.
    *
    * @type {number}
    * @protected
@@ -115,8 +115,8 @@ export class Spinner {
   protected startTime: number = 0;
 
   /**
-   * position: The position of the spinner animation.
-   * The position is used to determine where the spinner animation is displayed in the console.
+   * Position of the spinner relative to the text ('left' or 'right').
+   * This determines where the spinner appears in relation to the text.
    *
    * @type {'left' | 'right'}
    * @protected
@@ -128,8 +128,8 @@ export class Spinner {
   protected position: 'left' | 'right' = 'left';
 
   /**
-   * paused: The paused state of the spinner animation.
-   * The paused state is used to determine if the spinner animation is paused.
+   * Flag indicating whether the spinner is paused.
+   * This is used to control the spinner state.
    *
    * @type {boolean}
    * @protected
@@ -141,8 +141,8 @@ export class Spinner {
   protected paused: boolean = false;
 
   /**
-   * spinnerInstances: The spinner instances.
-   * The spinner instances are used to manage multiple spinner animations concurrently.
+   * Array that holds all active Spinner instances for global management.
+   * This is used to manage multiple spinner instances and ensure proper cleanup.
    *
    * @type {Spinner[]}
    * @protected
@@ -153,94 +153,107 @@ export class Spinner {
    */
   protected static spinnerInstances: Spinner[] = [];
 
+  /**
+   * Flag to ensure the exit listener is registered only once.
+   * This prevents multiple registrations of the same listener.
+   *
+   * @type {boolean}
+   * @protected
+   * @example
+   * console.log(Spinner.exitListenerRegistered);
+   *
+   * @returns {boolean} - The exit listener registration state
+   */
+  protected static exitListenerRegistered: boolean = false;
+
   // --------------------------------------------------
   // Constructor
   // --------------------------------------------------
 
   /**
    * Creates an instance of Spinner.
-   * The constructor is used to initialize the spinner animation.
+   * This constructor initializes the spinner with default or user-defined options.
    *
    * @constructor
    * @public
    * @example
-   * const spinner = new Spinner();
+   * const spinner = new Spinner({});
    * spinner.start('Loading...');
    * spinner.stop('Done!');
    *
-   * @param {SpinnerOptions} options The options to customize the spinner animation.
+   * @param {object} [options] Spinner options.
+   * @param {string[]} [options.frames] Array of frames for the spinner animation.
+   * @param {number} [options.interval] Interval between frames in milliseconds.
+   * @param {string | string[]} [options.format] Format options for styling.
+   * @param {'left' | 'right'} [options.position] Position of spinner relative to text.
    *
    * @returns {Spinner} - The spinner instance
    */
   constructor(options?: {
-    frames: string[];
+    frames?: string[];
     interval?: number;
     format?: string | string[];
     position?: 'left' | 'right';
   }) {
-    const {
-      frames = ['-', '\\', '|', '/'],
-      interval = 80,
-      format,
-      position = 'left',
-    }: SpinnerOptions = (options as SpinnerOptions) ?? {};
+    // Validate and normalize options using a centralized method.
+    const normalizedOptions = Spinner.normalizeOptions(
+      options as SpinnerOptions,
+    );
+    const { frames, interval, format, position } = normalizedOptions;
 
     this.frames = frames;
     this.interval = interval;
     this.format = format;
-
-    // Check if the position is valid
-    if (position !== 'left' && position !== 'right') {
-      this.position = 'left';
-    } else {
-      this.position = position;
-    }
+    this.position = position;
   }
 
-  // -----------------------------------------------------------------
+  // --------------------------------------------------
   // Methods
-  // -----------------------------------------------------------------
-
-  // Public methods
+  // --------------------------------------------------
 
   /**
    * Starts the spinner animation with an initial message.
-   * The spinner animation is displayed in the console.
+   * This method initializes the spinner and begins the animation.
    *
    * @public
    * @example
    * spinner.start('Loading...');
    *
-   * @param {string} text Message to display alongside the spinner.
+   * @param {string} [text=''] Message to display alongside the spinner.
    *
-   * @returns The Spinner instance for chaining.
+   * @returns {Spinner} The spinner instance for chaining.
    */
   public start(text: string = ''): this {
     this.text = text;
     this.startTime = performance.now();
 
-    // Register this instance for concurrent management.
+    // Add this spinner instance to the global list.
     Spinner.spinnerInstances.push(this);
 
-    // Print a new line to assign its position in the console.
+    // Write a new line to ensure proper position in the console.
     process.stdout.write('\n');
 
+    // Start the render loop using setInterval.
     this.timer = setInterval(() => this.render(), this.interval);
 
-    process.on('exit', this.cleanup);
+    // Register the global exit listener once.
+    if (!Spinner.exitListenerRegistered) {
+      process.on('exit', Spinner.globalCleanup);
+      Spinner.exitListenerRegistered = true;
+    }
 
     return this;
   }
 
   /**
    * Pauses the spinner animation without resetting its state.
-   * It clears the current timer and marks the spinner as paused.
+   * This method stops the animation but retains the current frame and text.
    *
    * @public
    * @example
    * spinner.pause();
    *
-   * @returns The Spinner instance for chaining.
+   * @returns {Spinner} The spinner instance for chaining.
    */
   public pause(): this {
     if (!this.paused && this.timer) {
@@ -254,13 +267,13 @@ export class Spinner {
 
   /**
    * Resumes the spinner animation if it was paused.
-   * It restarts the interval using the preserved state.
+   * This method restarts the animation from the current frame.
    *
    * @public
    * @example
    * spinner.resume();
    *
-   * @returns The Spinner instance for chaining.
+   * @returns {Spinner} The spinner instance for chaining.
    */
   public resume(): this {
     if (this.paused) {
@@ -274,54 +287,54 @@ export class Spinner {
 
   /**
    * Restarts the spinner animation using the current configuration.
-   * It stops the current animation and starts a new one with the same text.
+   * This method stops the current animation and starts a new one.
    *
    * @public
    * @example
    * spinner.restart();
    *
-   * @returns The Spinner instance for chaining.
+   * @returns {Spinner} The spinner instance for chaining.
    */
   public restart(): this {
     this.stop();
-
-    // Reset currentFrame to ensure restart from the beginning.
+    // Reset frame counter to start from the beginning.
     this.currentFrame = 0;
 
     return this.start(this.text);
   }
 
   /**
-   * Dynamically updates the spinner frames and resets the frame counter.
-   * The new frames are used for the spinner animation.
+   * Updates the spinner frames and resets the frame counter.
+   * This method allows dynamic changes to the spinner animation.
    *
    * @public
    * @example
-   * spinner.updateFrames(['-', '\\', '|', '/']);
+   * spinner.updateFrames(['|', '/', '-', '\\']);
    *
-   * @param {string[]} newFrames An array of new frames to use for the spinner animation.
-
-  * @returns The Spinner instance for chaining.
+   * @param {string[]} newFrames Array of new frames for the spinner.
+   *
+   * @returns {Spinner} The spinner instance for chaining.
    */
   public updateFrames(newFrames: string[]): this {
     // Update the spinner frames with the new array
     this.frames = newFrames;
     // Reset currentFrame index to 0 so the new frames start from the beginning
     this.currentFrame = 0;
+
     return this;
   }
 
   /**
-   * Updates the text displayed next to the spinner.
-   * The new message is displayed alongside the spinner animation.
+   * Updates the text displayed alongside the spinner.
+   * This method allows dynamic changes to the message.
    *
    * @public
    * @example
-   * spinner.updateText('Loading...');
+   * spinner.updateText('New message');
    *
-   * @param {string} newText The new message to display.
+   * @param {string} newText New text message.
    *
-   * @returns The Spinner instance for chaining.
+   * @returns {Spinner} The spinner instance for chaining.
    */
   public updateText(newText: string): this {
     this.text = newText;
@@ -331,81 +344,113 @@ export class Spinner {
 
   /**
    * Stops the spinner animation and displays the final message.
-   * The final message is displayed in the console.
+   * This method clears the spinner and shows the final output.
    *
    * @public
    * @example
    * spinner.stop('Done!');
    *
-   * @param {string} finalText Final message to display.
+   * @param {string} [finalText=''] Final text to display.
    *
-   * @returns The Spinner instance for chaining.
+   * @returns {Spinner} The spinner instance for chaining.
    */
   public stop(finalText: string = ''): this {
-    if (this.timer) {
-      clearInterval(this.timer);
-      this.timer = null;
+    try {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+      }
+
+      // For TTY environments, render final output and clear the line.
+      if (process.stdout.isTTY) {
+        this.render(finalText);
+        clearLine();
+      } else {
+        // For non-TTY, simply write the final message.
+        process.stdout.write(finalText + '\n');
+      }
+
+      // Remove this spinner instance from the global list.
+      Spinner.spinnerInstances = Spinner.spinnerInstances.filter(
+        (s) => s !== this,
+      );
+    } catch (error) {
+      console.error('Error in stop():', error);
+    } finally {
+      // Remove the specific cleanup listener for this instance.
+      process.off('exit', this.cleanup);
     }
-
-    // Check if the environment is TTY
-    if (process.stdout.isTTY) {
-      this.render(finalText);
-      // Clear the current line after rendering in TTY
-      clearLine();
-    } else {
-      // In non-TTY, simply print the final message with a new line.
-      process.stdout.write(finalText + '\n');
-    }
-
-    // Remove this instance from the active spinners array.
-    Spinner.spinnerInstances = Spinner.spinnerInstances.filter(
-      (s) => s !== this,
-    );
-
-    process.off('exit', this.cleanup);
 
     return this;
   }
 
   /**
    * Returns the current interval (in milliseconds) of the spinner.
-   * This method is used to retrieve the interval set for the spinner animation.
+   * This method allows querying the current speed of the spinner animation.
    *
    * @public
    * @example
-   * const interval = spinner.getInterval();
+   * console.log(spinner.getInterval());
    *
-   * @returns {number} The current interval in milliseconds.
+   * @returns {number} The current interval.
    */
   public getInterval(): number {
     return this.interval;
   }
 
   /**
-   * Gets the index of the current frame.
-   * This method is used to retrieve the current frame index of the spinner animation.
+   * Returns the index of the current frame.
+   * This method allows querying the current frame being displayed.
    *
    * @public
    * @example
-   * const currentFrame = spinner.getCurrentFrame();
+   * console.log(spinner.getCurrentFrame());
    *
-   * @returns The current frame index.
+   * @returns {number} The current frame index.
    */
   public getCurrentFrame(): number {
     return this.currentFrame;
   }
 
   /**
+   * Returns the timestamp when the spinner was started.
+   * This method allows querying the start time of the spinner.
+   *
+   * @public
+   * @example
+   * console.log(spinner.getStartTime());
+   *
+   * @returns {number} The start timestamp.
+   */
+  public getStartTime(): number {
+    return this.startTime;
+  }
+
+  /**
+   * Returns the text currently assigned to the spinner.
+   * This method allows querying the message displayed alongside the spinner.
+   *
+   * @public
+   * @example
+   * console.log(spinner.getCurrentText());
+   *
+   * @returns {string} The current text.
+   */
+  public getCurrentText(): string {
+    return this.text;
+  }
+
+  /**
    * Sets a new interval for the spinner and resets the timer if active.
-   * This method is used to change the interval of the spinner animation.
+   * This method allows dynamic changes to the speed of the spinner animation.
    *
    * @public
    * @example
    * spinner.setInterval(100);
    *
-   * @param newInterval The new interval in milliseconds.
+   * @param {number} newInterval The new interval in milliseconds.
    *
-   * @returns The Spinner instance for chaining.
+   * @returns {Spinner} The spinner instance for chaining.
    */
   public setInterval(newInterval: number): this {
     this.interval = newInterval;
@@ -419,123 +464,132 @@ export class Spinner {
   }
 
   /**
-   * Gets the elapsed time since the spinner started.
-   * This method is used to retrieve the elapsed time of the spinner animation.
+   * Returns the elapsed time (in milliseconds) since the spinner was started.
+   * This method allows querying the duration of the spinner animation.
    *
    * @public
    * @example
-   * const elapsedTime = spinner.getElapsedTime();
+   * console.log(spinner.getElapsedTime());
    *
-   * @returns The elapsed time in milliseconds.
+   * @returns {number} The elapsed time.
    */
   public getElapsedTime(): number {
     return Math.floor(performance.now() - this.startTime);
   }
 
   /**
-   * Gets the identifier of the current timer interval.
-   * This method is used to retrieve the timer identifier of the spinner animation.
+   * Returns the timer identifier or null if inactive.
+   * This method allows querying the current state of the spinner.
    *
    * @public
    * @example
-   * const timerId = spinner.getTimerId();
+   * console.log(spinner.getTimerId());
    *
-   * @returns The timer identifier or null if not active.
+   * @returns {ReturnType<typeof setInterval> | null} The timer identifier.
    */
   public getTimerId(): ReturnType<typeof setInterval> | null {
     return this.timer;
   }
 
-  // protected methods
+  // Protected methods
 
   /**
-   * Renders the spinner line at its designated position.
-   * The spinner line is displayed in the console.
+   * Generates the spinner's output string.
+   * This method can be overridden by subclasses to modify the rendering behavior.
    *
    * @protected
    * @example
-   * spinner.render();
+   * console.log(spinner.getRenderOutput());
    *
-   * @param {string} [finalText] If provided, displays this text instead of the animated spinner.
+   * @param {string} [finalText] Optional final text to display.
    *
-   * @returns void - Nothing
+   * @returns {string} The output string for the spinner.
    */
-  protected render(finalText?: string): void {
-    // For non-TTY environments, output degrades gracefully.
-    if (!process.stdout.isTTY) {
-      if (finalText !== undefined) {
-        process.stdout.write(finalText + '\n');
-      } else {
-        const frame = this.frames[this.currentFrame];
-
-        this.currentFrame = (this.currentFrame + 1) % this.frames.length;
-
-        const elapsed = Math.floor(performance.now() - this.startTime);
-        // In non-TTY, simply output text then frame
-        process.stdout.write(`${this.text} ${frame} (${elapsed}ms)\n`);
-      }
-      return;
-    }
-
-    const index = Spinner.spinnerInstances.indexOf(this);
-
-    if (index === -1) return;
-
-    // Cache stdout methods to reduce repeated lookups
-    const moveCursor = process.stdout.moveCursor;
-
-    if (typeof moveCursor === 'function') {
-      moveCursor.call(
-        process.stdout,
-        0,
-        -(Spinner.spinnerInstances.length - index),
-      );
-    }
-
-    if (typeof process.stdout.cursorTo === 'function') {
-      process.stdout.cursorTo(0);
-    }
-
-    clearLine();
-
-    let output: string;
-
+  protected getRenderOutput(finalText?: string): string {
     if (finalText !== undefined) {
-      output = finalText;
+      return finalText;
     } else {
       let frame = this.frames[this.currentFrame];
-
+      // Update the frame index in a circular fashion.
       this.currentFrame = (this.currentFrame + 1) % this.frames.length;
 
+      // Apply styling if format is provided.
       if (this.format) {
         frame = styleText(this.format, frame);
       }
 
-      // Compute elapsed time only once
       const elapsed = Math.floor(performance.now() - this.startTime);
 
-      // Modify output based on position: 'right' shows text first, then spinner frame.
-      output =
-        this.position === 'right'
-          ? `${this.text} ${frame} (${elapsed}ms)`
-          : `${frame} ${this.text} (${elapsed}ms)`;
-    }
-
-    process.stdout.write(output);
-
-    // Restore the cursor position using the cached method.
-    if (typeof moveCursor === 'function') {
-      moveCursor.call(
-        process.stdout,
-        0,
-        Spinner.spinnerInstances.length - index,
-      );
+      return this.position === 'right'
+        ? `${this.text} ${frame} (${elapsed}ms)`
+        : `${frame} ${this.text} (${elapsed}ms)`;
     }
   }
 
   /**
-   * Cleanup function to clear the spinner on process exit.
-   * The cleanup function is used to remove the spinner animation from the console.
+   * Renders the spinner output to the console.
+   * Error handling is implemented via try/catch to ensure robust execution.
+   *
+   * @protected
+   * @example
+   * console.log(spinner.render());
+   *
+   * @param {string} [finalText] Optional final text to display.
+   */
+  protected render(finalText?: string): void {
+    try {
+      // Non-TTY environments: print each update on a new line.
+      if (!process.stdout.isTTY) {
+        if (finalText !== undefined) {
+          process.stdout.write(finalText + '\n');
+        } else {
+          const frame = this.frames[this.currentFrame];
+          this.currentFrame = (this.currentFrame + 1) % this.frames.length;
+          const elapsed = Math.floor(performance.now() - this.startTime);
+          process.stdout.write(`${this.text} ${frame} (${elapsed}ms)\n`);
+        }
+        return;
+      }
+
+      // Get the current index of this spinner instance for positioning.
+      const index = Spinner.spinnerInstances.indexOf(this);
+      if (index === -1) return;
+
+      // Move the cursor to the correct line for overwriting.
+      if (typeof process.stdout.moveCursor === 'function') {
+        process.stdout.moveCursor.call(
+          process.stdout,
+          0,
+          -(Spinner.spinnerInstances.length - index),
+        );
+      }
+      if (typeof process.stdout.cursorTo === 'function') {
+        process.stdout.cursorTo(0);
+      }
+
+      // Clear the current line.
+      clearLine();
+
+      // Generate the output using the helper method.
+      const output = this.getRenderOutput(finalText);
+      process.stdout.write(output);
+
+      // Restore the cursor position.
+      if (typeof process.stdout.moveCursor === 'function') {
+        process.stdout.moveCursor.call(
+          process.stdout,
+          0,
+          Spinner.spinnerInstances.length - index,
+        );
+      }
+    } catch (error) {
+      console.error('Error in render():', error);
+    }
+  }
+
+  /**
+   * Cleanup method to clear the spinner in case of process exit.
+   * This method is called when the process exits to ensure all spinners are cleared.
    *
    * @protected
    * @example
@@ -544,11 +598,77 @@ export class Spinner {
    * @returns void - Nothing
    */
   protected cleanup = (): void => {
-    if (this.timer) {
-      clearInterval(this.timer);
-      this.timer = null;
+    try {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+      }
+      clearLine();
+    } catch (error) {
+      console.error('Error in cleanup():', error);
     }
+  };
 
-    clearLine();
+  // Private methods
+
+  /**
+   * Normalizes and validates spinner options.
+   * This method ensures that the options provided are in the correct format and type.
+   *
+   * @private
+   * @example
+   * console.log(Spinner.normalizeOptions({ frames: ['|', '/', '-'] }));
+   *
+   * @param {SpinnerOptions} [options] Spinner options.
+   *
+   * @returns {SpinnerOptions} Normalized spinner options.
+   */
+  private static normalizeOptions(options?: SpinnerOptions): SpinnerOptions {
+    const defaultFrames = ['-', '\\', '|', '/'];
+    const defaultInterval = 80;
+    const defaultPosition: 'left' | 'right' = 'left';
+
+    const {
+      frames = defaultFrames,
+      interval = defaultInterval,
+      format = 'white', // Provide a default value for format
+      position = defaultPosition,
+    } = options ?? {};
+
+    const normalizedPosition =
+      position === 'left' || position === 'right' ? position : defaultPosition;
+
+    return {
+      frames,
+      interval,
+      format: format as FormatOptions,
+      position: normalizedPosition,
+    };
+  }
+
+  /**
+   * Global cleanup method called on process exit to clean all spinner instances.
+   * This method ensures that all active spinners are cleared and cleaned up.
+   *
+   * @private
+   * @example
+   * console.log(Spinner.globalCleanup());
+   *
+   * @returns void - Nothing
+   */
+  private static globalCleanup = (): void => {
+    Spinner.spinnerInstances.forEach((spinner) => {
+      try {
+        if (spinner.timer) {
+          clearInterval(spinner.timer);
+          spinner.timer = null;
+        }
+        clearLine();
+      } catch (error) {
+        console.error('Error in globalCleanup():', error);
+      }
+    });
+
+    Spinner.spinnerInstances = [];
   };
 }
