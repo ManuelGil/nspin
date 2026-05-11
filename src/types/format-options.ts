@@ -1,4 +1,4 @@
-import type { BackgroundColors, ForegroundColors, Modifiers } from '.';
+import type { BackgroundColors, ForegroundColors, Modifiers } from './index.js';
 
 /**
  * FormatOptions: The format options.

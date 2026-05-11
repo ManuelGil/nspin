@@ -5,7 +5,23 @@ All notable changes to the "nspin" package will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+[Unreleased]
+
+## [1.8.0] - 2026-05-11
+
+### Added
+
+- Add `isPaused()` method to query whether a spinner is paused.
+
+### Changed
+
+- Use explicit ESM `.js` module specifiers across source and type files for improved module resolution.
+- Update package metadata and build scripts to simplify ESM/CJS exports and publishing behavior.
+- Prevent duplicate `start()` calls from creating multiple active timers or duplicate instances; remove global exit listener when no spinners remain.
+
+### Fixed
+
+- Ensure spinner frames default to an empty string to avoid rendering `undefined` frames.
 
 ## [1.7.0] - 2025-03-30
 
@@ -88,7 +104,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the npm package.
 
-[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1..0...HEAD
+[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/ManuelGil/nspin/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/ManuelGil/nspin/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/ManuelGil/nspin/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/ManuelGil/nspin/compare/v1.4.0...v1.5.0

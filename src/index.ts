@@ -1,8 +1,8 @@
-import { styleText } from 'node:util';
 import { performance } from 'node:perf_hooks';
+import { styleText } from 'node:util';
 
-import { clearLine } from './helpers/console';
-import type { FormatOptions, SpinnerOptions } from './types';
+import { clearLine } from './helpers/console.js';
+import type { FormatOptions, SpinnerOptions } from './types/index.js';
 
 /**
  * Spinner: Class to display a spinner animation in the console.
@@ -224,6 +224,13 @@ export class Spinner {
    * @returns {Spinner} The spinner instance for chaining.
    */
   public start(text: string = ''): this {
+    // If already started, just update the text and return.
+    if (this.timer) {
+      this.text = text;
+      this.paused = false;
+      return this;
+    }
+
     this.text = text;
     this.startTime = performance.now();
 
@@ -241,6 +248,8 @@ export class Spinner {
       process.on('exit', Spinner.globalCleanup);
       Spinner.exitListenerRegistered = true;
     }
+
+    this.paused = false;
 
     return this;
   }
@@ -377,8 +386,15 @@ export class Spinner {
     } catch (error) {
       console.error('Error in stop():', error);
     } finally {
-      // Remove the specific cleanup listener for this instance.
-      process.off('exit', this.cleanup);
+      // If there are no more spinner instances, remove the global exit
+      // listener to avoid leaving an attached handler.
+      if (
+        Spinner.spinnerInstances.length === 0 &&
+        Spinner.exitListenerRegistered
+      ) {
+        process.off('exit', Spinner.globalCleanup);
+        Spinner.exitListenerRegistered = false;
+      }
     }
 
     return this;
@@ -491,6 +507,20 @@ export class Spinner {
     return this.timer;
   }
 
+  /**
+   * Returns whether the spinner is currently paused.
+   * This method allows querying the paused state of the spinner.
+   *
+   * @public
+   * @example
+   * console.log(spinner.isPaused());
+   *
+   * @returns {boolean} True if paused, false otherwise.
+   */
+  public isPaused(): boolean {
+    return this.paused;
+  }
+
   // Protected methods
 
   /**
@@ -509,7 +539,7 @@ export class Spinner {
     if (finalText !== undefined) {
       return finalText;
     } else {
-      let frame = this.frames[this.currentFrame];
+      let frame = this.frames[this.currentFrame] ?? '';
       // Update the frame index in a circular fashion.
       this.currentFrame = (this.currentFrame + 1) % this.frames.length;
 
@@ -543,7 +573,7 @@ export class Spinner {
         if (finalText !== undefined) {
           process.stdout.write(finalText + '\n');
         } else {
-          const frame = this.frames[this.currentFrame];
+          const frame = this.frames[this.currentFrame] ?? '';
           this.currentFrame = (this.currentFrame + 1) % this.frames.length;
           const elapsed = Math.floor(performance.now() - this.startTime);
           process.stdout.write(`${this.text} ${frame} (${elapsed}ms)\n`);

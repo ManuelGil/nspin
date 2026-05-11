@@ -1,0 +1,50 @@
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+
+    target-branch: "main"
+
+    schedule:
+      interval: "cron"
+      cronjob: "0 3 */14 * *"
+
+    open-pull-requests-limit: 2
+
+    ignore:
+      # Major updates should be reviewed manually
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+
+    groups:
+      development-dependencies:
+        dependency-type: "development"
+
+    labels:
+      - "dependencies"
+
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+    rebase-strategy: "auto"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+
+    schedule:
+      interval: "cron"
+      cronjob: "0 3 */14 * *"
+
+    open-pull-requests-limit: 2
+
+    labels:
+      - "github-actions"
+
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+
+    rebase-strategy: "auto"

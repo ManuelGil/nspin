@@ -1,0 +1,38 @@
+name: Bug Report
+description: Report a reproducible issue
+title: "[Bug]: "
+labels:
+  - bug
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve nspin-bun.
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime
+      placeholder: Bun 1.3.x / Node 22.x
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior

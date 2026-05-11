@@ -3,16 +3,24 @@
 		"target": "ES2022",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
+		"rootDir": "./src",
 		"strict": true,
+		"verbatimModuleSyntax": true,
+		"exactOptionalPropertyTypes": true,
 		"declaration": true,
+		"declarationMap": true,
 		"declarationDir": "./dist",
 		"outDir": "./dist",
 		"stripInternal": true,
 		"skipLibCheck": true,
-		"allowSyntheticDefaultImports": true,
 		"resolveJsonModule": true,
-		"emitDecoratorMetadata": false
+		"forceConsistentCasingInFileNames": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noPropertyAccessFromIndexSignature": true
 	},
 	"include": ["src/**/*.ts"],
-	"exclude": ["node_modules", "dist"]
+	"exclude": ["node_modules", "dist", "tests", "vite.config.mts"]
 }

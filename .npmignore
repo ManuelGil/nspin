@@ -1,8 +1,13 @@
+.github/
 .gitignore
 .npmignore
 dist/**/*.map
+docs/
+examples/
 node_modules
+README.npm.md
 src/
+test/
 tests/
 tsconfig.json
 tsup.config.ts
