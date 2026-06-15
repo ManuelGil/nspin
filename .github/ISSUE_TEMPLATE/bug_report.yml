@@ -8,7 +8,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you for helping improve nspin-bun.
+        Thank you for helping improve nspin.
 
   - type: input
     id: runtime
