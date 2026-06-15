@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]
 
+## [1.8.1] - 2026-06-14
+
+### Changed
+
+- Update the minimum supported Node.js version to 22.19.0.
+- Update project dependencies and development tooling.
+- Update GitHub Actions workflows to current major versions.
+- Refresh Biome configuration.
+- Regenerate the pnpm lockfile.
+
+### Fixed
+
+- Fix vulnerabilities reported by dependency audits.
+- Update vulnerable transitive dependencies to patched versions.
+
 ## [1.8.0] - 2026-05-11
 
 ### Added
@@ -104,7 +119,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release of the npm package.
 
-[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.8.0...HEAD
+[Unreleased]: https://github.com/ManuelGil/nspin/compare/v1.8.1...HEAD
+[1.8.1]: https://github.com/ManuelGil/nspin/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/ManuelGil/nspin/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/ManuelGil/nspin/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/ManuelGil/nspin/compare/v1.5.0...v1.6.0
